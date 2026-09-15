@@ -22,18 +22,27 @@ function renderScreen(direcao = 'next') {
           <p class="titulo-pergunta">${currentQuestion.question}</p>
           <div class="opcoes">
   `;
-
-  currentQuestion.scale.forEach(opcao => {
-    const temEmoji = opcao.icon ? true : false;
-    const ativoClass = jaRespondida === opcao.value ? 'ativo' : ''; 
-
+  if (currentQuestion.open) {
     html += /*html*/`
-      <button class="btn-opcao ${ativoClass}" data-pergunta="${currentQuestion.question}" data-valor="${opcao.value}">
-        ${temEmoji ? `<span class="emoji">${opcao.icon}</span>` : ''}
-        <span class="texto-opcao">${opcao.label}</span>
-      </button>
+      <textarea
+        id="resposta-aberta"
+        class="resposta-aberta"
+        placeholder="Digite..."
+      >${jaRespondida || ''}</textarea>
     `;
-  });
+  } else {
+    currentQuestion.scale.forEach(opcao => {
+      const temEmoji = opcao.icon ? true : false;
+      const ativoClass = jaRespondida === opcao.value ? 'ativo' : ''; 
+
+      html += /*html*/`
+        <button class="btn-opcao ${ativoClass}" data-pergunta="${currentQuestion.question}" data-valor="${opcao.value}">
+          ${temEmoji ? `<span class="emoji">${opcao.icon}</span>` : ''}
+          <span class="texto-opcao">${opcao.label}</span>
+        </button>
+      `;
+    });
+  }
 
   html += /*html*/`
           </div>
@@ -58,6 +67,7 @@ function configurarCliques(isLastQuestion) {
   const botoesOpcao = document.querySelectorAll('.btn-opcao');
   const actionButton = document.getElementById('btn-avancar');
   const backButton = document.getElementById('btn-voltar');
+  const currentQuestion = questions[currentQuestionIndex];
 
   const avancarPergunta = async () => {
     if (!isLastQuestion) {
@@ -109,6 +119,22 @@ function configurarCliques(isLastQuestion) {
       }, 400);
     });
   });
+
+const respostaAberta = document.getElementById('resposta-aberta');
+
+if (respostaAberta) {
+  respostaAberta.addEventListener('input', () => {
+    const valor = respostaAberta.value.trim();
+
+    if (valor) {
+      userResponses[currentQuestion.question] = valor;
+      actionButton.disabled = false;
+    } else {
+      delete userResponses[currentQuestion.question];
+      actionButton.disabled = true;
+    }
+  });
+}
 
   if (backButton) {
     backButton.addEventListener('click', () => {
