@@ -1,10 +1,37 @@
 import './style.css';
 import submitReview from './api.js';
-import { questions } from '../data/questions.example.js'; // comente esta linha e descomente a seguinte para usar suas próprias perguntas
-// import { questions } from '../data/questions.js';
+import { questions as defaultQuestions } from '../data/questions.example.js';
+import { brand as defaultBrand } from '../data/brand.example.js';
+
+const localQuestionModules = import.meta.glob('../data/questions.js', { eager: true });
+const localBrandModules = import.meta.glob('../data/brand.js', { eager: true });
+const localQuestions = localQuestionModules['../data/questions.js']?.questions;
+const localBrand = localBrandModules['../data/brand.js']?.brand;
+const questions = localQuestions ?? defaultQuestions;
+const brand = { ...defaultBrand, ...localBrand };
+
+Object.entries(brand.colors ?? {}).forEach(([name, value]) => {
+  document.documentElement.style.setProperty(name, value);
+});
 
 const userResponses = {};
 let currentQuestionIndex = 0; 
+let inactivityTimer;
+
+function resetarPorInatividade() {
+  for (let key in userResponses) delete userResponses[key];
+  currentQuestionIndex = 0;
+  renderScreen('prev');
+}
+
+function iniciarTimerInatividade() {
+  clearTimeout(inactivityTimer);
+  inactivityTimer = setTimeout(resetarPorInatividade, 120000);
+}
+
+function pararTimerInatividade() {
+  clearTimeout(inactivityTimer);
+}
 
 function renderScreen(direcao = 'next') {
   const app = document.querySelector('#app');
@@ -14,8 +41,13 @@ function renderScreen(direcao = 'next') {
 
   let html = /*html*/`
     <main class="container">
-      <h1>Pesquisa de Satisfação</h1>
-      <p class="contador">Pergunta ${currentQuestionIndex + 1} de ${questions.length}</p>
+      <div class="header-container ${brand.logo ? '' : 'header-container-sem-logo'}">
+        ${brand.logo ? `<img src="${brand.logo}" alt="${brand.logoAlt}" class="logo">` : ''}
+        <div class="header-text">
+          <h1>${brand.title}</h1>
+          <p class="contador">Pergunta ${currentQuestionIndex + 1} de ${questions.length}</p>
+        </div>
+      </div>
       
       <div id="lista-perguntas">
         <div class="bloco-pergunta anima-${direcao}">
@@ -61,6 +93,7 @@ function renderScreen(direcao = 'next') {
 
   app.innerHTML = html;
   configurarCliques(isLastQuestion);
+  iniciarTimerInatividade();
 }
 
 function configurarCliques(isLastQuestion) {
@@ -79,6 +112,7 @@ function configurarCliques(isLastQuestion) {
         review: userResponses[pergunta]
       }));
 
+      pararTimerInatividade();
       mostrarCarregamento();
 
       const tentarEnviar = async () => {
@@ -113,6 +147,8 @@ function configurarCliques(isLastQuestion) {
       if (isLastQuestion) {
         botoesOpcao.forEach(btn => btn.disabled = true);
       }
+
+      iniciarTimerInatividade();
 
       setTimeout(() => {
         avancarPergunta();
@@ -191,3 +227,15 @@ function mostrarErroTravado(mensagem, callbackReenvio) {
 }
 
 renderScreen('next');
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('Service Worker registrado com sucesso no escopo:', registration.scope);
+      })
+      .catch(error => {
+        console.error('Falha ao registrar o Service Worker:', error);
+      });
+  });
+}

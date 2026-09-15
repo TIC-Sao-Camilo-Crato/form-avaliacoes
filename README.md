@@ -15,7 +15,7 @@ Um sistema minimalista de avaliações projetado para rodar como PWA (totem em t
    npm install
    ```
 
-2. Configure as perguntas: duplique o arquivo `data/questions.example.js`, renomeie para `data/questions.js` e modifique conforme necessário.
+2. Configure as perguntas: duplique o arquivo `data/questions.example.js`, renomeie para `data/questions.js` e modifique conforme necessário. Para aplicar uma marca local, duplique também `data/brand.example.js` como `data/brand.js`. Esses dois arquivos são ignorados pelo Git, para que perguntas, identidade visual e logo de uma implantação não sejam publicados.
 
 Crie um arquivo .env na raiz do projeto contendo a URL do seu Webhook gerado no Google Apps Script:
     ```bash

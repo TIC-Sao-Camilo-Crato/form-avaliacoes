@@ -1,9 +1,10 @@
 {
   "name": "Pesquisa de Satisfação",
   "short_name": "Avaliação",
-  "description": "Formulário de avaliação de satisfação",
-  "start_url": "/",
-  "display": "fullscreen",
+  "description": "Formulário de avaliação de satisfação do cliente.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
   "background_color": "#f4f4f9",
   "theme_color": "#0056b3",
   "icons": [

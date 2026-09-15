@@ -85,6 +85,25 @@ body {
   text-align: center;
 }
 
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+}
+
+.header-text {
+  text-align: right;
+}
+
+.header-container-sem-logo {
+  justify-content: flex-end;
+}
+
+img.logo {
+  max-width: 150px;
+  height: auto;
+}
+
 h1 {
   font-size: var(--font-size-md);
   color: var(--color-primary);
@@ -267,15 +286,15 @@ h1 {
 /* --- TRANSIÇÕES DE TELA (PERGUNTAS) --- */
 
 .anima-next {
-  animation: slideInRight 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  animation: slideInRight 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
 
 .anima-prev {
-  animation: slideInLeft 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  animation: slideInLeft 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
 
 .anima-entrada {
-  animation: fadeIn 0.4s ease-out forwards;
+  animation: fadeIn 0.6s ease-out forwards;
 }
 
 @keyframes slideInRight {
@@ -313,7 +332,7 @@ h1 {
 
 /* --- RESPONSIVIDADE (MOBILE) --- */
 
-@media (max-width: 1000px) {
+@media (max-width: 1500px) {
   .container {
     padding: var(--space-lg);
     width: 100dvw;
