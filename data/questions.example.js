@@ -29,6 +29,10 @@ const questions = [
   {
     question: "Você recomendaria nossos serviços para outras pessoas?",
     scale: emoji_scale
+  },
+  { 
+    question: "Deixe aqui sua opinião!",
+    open: true 
   }
 ];
 
